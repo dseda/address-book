@@ -52,6 +52,7 @@ const toggleAllContacts = () => {
     $allContacts.hide();
   }
 };
+
 toggleAllContacts();
 
 $newContactBtn.click(function () {
