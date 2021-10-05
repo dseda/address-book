@@ -1,4 +1,11 @@
 const contacts = [];
+let $allContacts = $("#all-contacts");
+let $createNewContact = $("#create-new-contact");
+let $info = $("#info");
+let $newContactBtn = $("#create-contact");
+let $myContacts = $("h1");
+
+$createNewContact.hide();
 
 class Contact {
   constructor(fname, lname, phone, address) {
@@ -15,8 +22,53 @@ class Contact {
 
 const createNewContact = (firstName, lastName, phone, address) => {
   const contact = new Contact(firstName, lastName, phone, address);
-  contacts.push(contact);
   return contact;
+};
+
+//Add dummy data
+contacts.push(createNewContact("seda", "demir", "07722 334455", "London"));
+contacts.push(createNewContact("helen", "talbot", "07766 334455", "Reading"));
+
+const displayAllContacts = () => {
+  for (let obj of contacts) {
+    $("<p>")
+      .addClass("contact-info")
+      // .data("contact", obj)
+      .text(obj.fullName + " " + obj.phone + " " + obj.address)
+      .appendTo("#container");
+  }
+};
+
+const toggleAllContacts = () => {
+  if (contacts.length) {
+    displayAllContacts();
+    $info.hide();
+  } else {
+    $info
+      .show()
+      .addClass("nothing-found")
+      .text("No contacts found")
+      .appendTo("body");
+    $allContacts.hide();
+  }
+};
+toggleAllContacts();
+
+$newContactBtn.click(function () {
+  $createNewContact.show();
+});
+
+$myContacts.click(function () {
+  $("#new-contact").trigger("reset");
+  $createNewContact.hide();
+});
+
+const add = (contact) => {
+  $("<p>")
+    .addClass("contact-info")
+    .data("contact", contact)
+    .text(contact.fullName + " " + contact.phone + " " + contact.address)
+    .appendTo("#container");
 };
 
 $("#new-contact").on("submit", function (event) {
@@ -26,37 +78,18 @@ $("#new-contact").on("submit", function (event) {
   let phone = $(this).find("[name=phone]").val();
   let address = $(this).find("[name=address]").val();
   const contact = createNewContact(firstName, lastName, phone, address);
-
-  $("<p>")
-    .addClass("contact-info")
-    .data("contact", contact)
-    .text(contact.fullName)
-    .appendTo("#container");
-
+  contacts.push(contact);
+  //Add newly created contact to All Contacts Section
+  add(contact);
+  //Empty form inputs
   $(this).trigger("reset");
 });
 
 $("#cancel").click(function () {
   $("#new-contact").trigger("reset");
+  $createNewContact.hide();
 });
 
-$("p").on("click", function () {
-  let selectedContact = $(this);
-  // .data("contact");
-  console.log(selectedContact);
-  $("<div>")
-    .addClass("contact-detail")
-    .text(
-      selectedContact
-      // selectedContact.fname +
-      //   " " +
-      //   selectedContact.lname +
-      //   " " +
-      //   selectedContact.phone +
-      //   " " +
-      //   selectedContact.address
-    )
-    .appendTo("#container");
-});
-
-console.log(contacts);
+for (let item of contacts) {
+  console.log(item);
+}

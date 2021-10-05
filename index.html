@@ -6,21 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Address Book</title>
     <link rel="stylesheet" href="./css/style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
   
   </head>
   <body>
+    <header>
     <a href="#"><h1>My Contacts</h1></a>
-    <div id="create-new-contact">Create New</div>
+    <button id="create-contact" type="button">Create New</button>
     <input
       type="search"
       name="search"
       id="search"
       placeholder="Search contact name..."
     />
-
-    <h2 id="x">X</h2>
-    
+  </header>
+    <section id="create-new-contact">
     <h2>Create New Contact</h2>
     <form id="new-contact" action="home.html">
       <ul>
@@ -44,8 +44,14 @@
       <button id="create" form="new-contact" type="submit">Save</button>
       <button id="cancel" form="new-contact" type="reset">Cancel</button>
     </form>
+  </section>
+    <section id ="all-contacts">
     <h3>All Contacts</h2>
     <div id="container"></div>
+  </section>
+  <p id="info"></p>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="./javascript/index.js"></script>
   </body>
 </html>
