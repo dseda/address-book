@@ -1,11 +1,12 @@
 $().ready(function () {
-  const contacts = [];
+  let contacts = [];
   let $allContacts = $("#all-contacts");
   let $createNewContact = $("#create-new-contact");
   let $info = $("#info");
   let $newContactBtn = $("#create-contact");
   let $myContacts = $("h1");
-
+  let $container = $("#container");
+  $container.empty();
   $createNewContact.hide();
 
   class Contact {
@@ -31,12 +32,19 @@ $().ready(function () {
   contacts.push(createNewContact("helen", "talbot", "07766 334455", "Reading"));
 
   const displayAllContacts = () => {
+    $container.empty();
     for (let obj of contacts) {
-      $("<p>")
-        .addClass("contact-info")
-        // .data("contact", obj)
-        .text(obj.fullName + " " + obj.phone + " " + obj.address)
-        .appendTo("#container");
+      $("<button>")
+        .text("delete")
+        .addClass("delete")
+        .prop("type", "button")
+        .appendTo(
+          $("<p>")
+            .addClass("contact-info")
+            .data("contact", obj)
+            .text(obj.fullName + " " + obj.phone + " " + obj.address)
+            .appendTo($container)
+        );
     }
   };
 
@@ -66,11 +74,17 @@ $().ready(function () {
   });
 
   const add = (contact) => {
-    $("<p>")
-      .addClass("contact-info")
-      .data("contact", contact)
-      .text(contact.fullName + " " + contact.phone + " " + contact.address)
-      .appendTo("#container");
+    $("<button>")
+      .text("delete")
+      .addClass("delete")
+      .prop("type", "button")
+      .appendTo(
+        $("<p>")
+          .addClass("contact-info")
+          .data("contact", contact)
+          .text(contact.fullName + " " + contact.phone + " " + contact.address)
+          .appendTo($container)
+      );
   };
 
   $("#new-contact").on("submit", function (event) {
@@ -92,7 +106,13 @@ $().ready(function () {
     $createNewContact.hide();
   });
 
-  for (let item of contacts) {
-    console.log(item);
-  }
+  $(document).on("click", ".delete", function () {
+    let $deleteBtn = $(this);
+    let contact = $deleteBtn.parent().data("contact");
+    if (contacts.indexOf(contact !== -1)) {
+      contacts = contacts.filter((item) => item.phone !== contact.phone);
+    }
+    displayAllContacts();
+    console.log(contacts.length);
+  });
 });
