@@ -44,15 +44,26 @@ $().ready(function () {
   };
 
   $("h1").click(function () {
-    $("#new").trigger("reset");
+    $("form").trigger("reset");
     $createContact.hide();
+    $(".edit.editable").parent().removeClass("editable");
   });
   $("h2").click(function () {
-    $("#new").trigger("reset");
+    $("form").trigger("reset");
     $createContact.hide();
+    $(".edit.editable").parent().removeClass("editable");
   });
   $newContactBtn.click(function () {
     $createContact.show();
+    $("form").prop("id", "new");
+    $(".edit.editable").parent().removeClass("editable");
+    $("form").trigger("reset");
+  });
+
+  $("#cancel").click(function () {
+    $("form").trigger("reset");
+    $(".edit.editable").parent().removeClass("editable");
+    $createContact.hide();
   });
 
   const renderContact = (contact) => {
@@ -74,9 +85,9 @@ $().ready(function () {
   };
 
   /////////////******** ADD NEW CONTACT *************////////
-  $(document).on("submit", "#new", function () {
-    // $("#new").on("submit", function (event) {
+  $(document).on("submit", "form#new", function (event) {
     event.preventDefault();
+
     let firstName = $(this).find("[name=first-name]").val().toLowerCase();
     let lastName = $(this).find("[name=last-name]").val().toLowerCase();
     let phone = $(this).find("[name=phone]").val();
@@ -89,11 +100,6 @@ $().ready(function () {
     $(this).trigger("reset");
     $createContact.hide();
     $info.hide();
-  });
-
-  $("#cancel").click(function () {
-    $("#new").trigger("reset");
-    $createContact.hide();
   });
 
   ////////////********* DISPLAY ALL CONTACTS ********//////////
@@ -126,6 +132,7 @@ $().ready(function () {
   /////////******** SEARCH CONTACTS *********///////////
 
   $("#search").on("focusin change input click", function () {
+    $createContact.hide();
     $info.hide();
     let search = $("#search").val().toLowerCase();
     let found = contacts.find(
@@ -157,6 +164,26 @@ $().ready(function () {
     $contactsContainer.empty();
     displayContacts();
   });
+
+  /////////******** EDIT CONTACT *********///////////
+  $(document).on("click", ".edit", function () {
+    $(".edit.editable").parent().removeClass("editable");
+    // $(event.currentTarget).addClass("editable");
+    $(this).addClass("editable");
+    $(this).parent().addClass("editable");
+    $(this).parent().data("contact");
+    $("form").prop("id", "edit");
+    let $editForm = $("form#edit");
+    let contact = $(this).parent().data("contact");
+    console.log($editForm);
+    $editForm.find("[name=first-name]").val(contact.fname);
+    $editForm.find("[name=last-name]").val(contact.lname);
+    $editForm.find("[name=phone]").val(contact.phone);
+    $editForm.find("[name=address]").val(contact.address);
+    console.log(contacts);
+    $createContact.show();
+  });
+
   //Add dummy data
   let c1 = createNewContact("seda", "demir", "07700 000000", "london");
   contacts.push(c1);
