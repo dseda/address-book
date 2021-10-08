@@ -1,18 +1,18 @@
 $().ready(function () {
   let contacts = [];
-  let $allContacts = $("#all-contacts");
-  let $createContact = $("#create-contact");
+  let $allContacts = $("contacts");
+  let $modifyContacts = $("#modify-contacts");
   let $info = $("#info");
   let $newContactBtn = $("#create-new");
   let $contactsContainer = $("#container");
-  $createContact.hide();
+  $modifyContacts.hide();
 
   class Contact {
     constructor(fname, lname, phone, address) {
-      this.fname = fname;
-      this.lname = lname;
+      this.fname = fname.toLowerCase();
+      this.lname = lname.toLowerCase();
       this.phone = phone;
-      this.address = address;
+      this.address = address.toLowerCase();
     }
 
     get fullName() {
@@ -45,16 +45,18 @@ $().ready(function () {
 
   $("h1").click(function () {
     $("form").trigger("reset");
-    $createContact.hide();
+    $modifyContacts.hide();
     $(".edit.editable").parent().removeClass("editable");
   });
   $("h2").click(function () {
     $("form").trigger("reset");
-    $createContact.hide();
+    $modifyContacts.hide();
     $(".edit.editable").parent().removeClass("editable");
   });
   $newContactBtn.click(function () {
-    $createContact.show();
+    $modifyContacts.find($("h3")).text("Create a Contact");
+    $info.hide();
+    $modifyContacts.show();
     $("form").prop("id", "new");
     $(".edit.editable").parent().removeClass("editable");
     $("form").trigger("reset");
@@ -63,7 +65,7 @@ $().ready(function () {
   $("#cancel").click(function () {
     $("form").trigger("reset");
     $(".edit.editable").parent().removeClass("editable");
-    $createContact.hide();
+    $modifyContacts.hide();
   });
 
   const renderContact = (contact) => {
@@ -88,17 +90,17 @@ $().ready(function () {
   $(document).on("submit", "form#new", function (event) {
     event.preventDefault();
 
-    let firstName = $(this).find("[name=first-name]").val().toLowerCase();
-    let lastName = $(this).find("[name=last-name]").val().toLowerCase();
+    let firstName = $(this).find("[name=first-name]").val();
+    let lastName = $(this).find("[name=last-name]").val();
     let phone = $(this).find("[name=phone]").val();
-    let address = $(this).find("[name=address]").val().toLowerCase();
+    let address = $(this).find("[name=address]").val();
     const contact = createNewContact(firstName, lastName, phone, address);
     contacts.push(contact);
     //Add newly created contact to All Contacts Section
     $contactsContainer.append(renderContact(contact));
     //Empty form inputs
     $(this).trigger("reset");
-    $createContact.hide();
+    $modifyContacts.hide();
     $info.hide();
   });
 
@@ -127,12 +129,14 @@ $().ready(function () {
     if (!contacts.length) {
       $contactsContainer.prepend($info.show().text("No contacts found Y"));
     }
+    $("form").trigger("reset");
+    $modifyContacts.hide();
   });
 
   /////////******** SEARCH CONTACTS *********///////////
 
   $("#search").on("focusin change input click", function () {
-    $createContact.hide();
+    $modifyContacts.hide();
     $info.hide();
     let search = $("#search").val().toLowerCase();
     let found = contacts.find(
@@ -167,10 +171,12 @@ $().ready(function () {
 
   /////////******** EDIT CONTACT *********///////////
   $(document).on("click", ".edit", function () {
-    $(".edit.editable").parent().removeClass("editable");
+    $modifyContacts.find($("h3")).text("Edit Contact");
+    $(".edit.editable").removeClass("editable");
     // $(event.currentTarget).addClass("editable");
+    console.log($(this));
     $(this).addClass("editable");
-    $(this).parent().addClass("editable");
+    // $(this).parent().addClass("editable");
     $(this).parent().data("contact");
     $("form").prop("id", "edit");
     let $editForm = $("form#edit");
@@ -181,7 +187,36 @@ $().ready(function () {
     $editForm.find("[name=phone]").val(contact.phone);
     $editForm.find("[name=address]").val(contact.address);
     console.log(contacts);
-    $createContact.show();
+    $modifyContacts.show();
+  });
+
+  $(document).on("submit", "form#edit", function (event) {
+    event.preventDefault();
+    let contact = $(".edit.editable").parent().data("contact");
+    let index = contacts.indexOf(contact);
+    contacts[index].updateFirstName = $(this)
+      .find("[name=first-name]")
+      .val()
+      .toLowerCase();
+    contacts[index].updateLastName = $(this)
+      .find("[name=last-name]")
+      .val()
+      .toLowerCase();
+    contacts[index].updatePhone = $(this)
+      .find("[name=phone]")
+      .val()
+      .toLowerCase();
+    contacts[index].updateAddress = $(this)
+      .find("[name=address]")
+      .val()
+      .toLowerCase();
+
+    //Empty form inputs
+    $("form").trigger("reset");
+    $modifyContacts.hide();
+    $contactsContainer.empty();
+    displayContacts();
+    $info.hide();
   });
 
   //Add dummy data
