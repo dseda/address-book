@@ -5,53 +5,54 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Address Book</title>
-    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/style.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="./javascript/index.js"></script>
   </head>
   <body>
     <header>
-    <a href="#"><h1>My Contacts</h1></a>
-    <button id="create-contact" type="button">Create New</button>
-    <input
-      type="search"
-      name="search"
-      id="search"
-      placeholder="Search contact name..."
-    />
-  </header>
-    <section id="create-new-contact">
-    <h2>Create New Contact</h2>
-    <form id="new-contact" action="home.html">
-      <ul>
-        <li>
-          <label for="first-name">First Name: </label>
-          <input type="text" name="first-name" id="fname" />
-        </li>
-        <li>
-          <label for="last-name">Last Name: </label>
-          <input type="text" name="last-name" id="lname" />
-        </li>
-        <li>
-          <label for="phone">Phone: </label>
-          <input type="tel" name="phone" id="phone" />
-        </li>
-        <li>
-          <label for="address">Address: </label>
-          <input type="text" name="address" id="address" />
-        </li>
-      </ul>
-      <button id="create" form="new-contact" type="submit">Save</button>
-      <button id="cancel" form="new-contact" type="reset">Cancel</button>
-    </form>
-  </section>
-    <section id ="all-contacts">
-    <h3>All Contacts</h2>
-    <div id="container"></div>
-  </section>
-  <p id="info"></p>
-
- 
-  
+      <a href="#"><h1>My Contacts</h1></a>
+      <button id="create-new" type="button">Create New</button>
+      <div id="search-contacts">
+        <input
+          type="search"
+          id="search"
+          name="search"
+          placeholder="Search contacts"
+        />
+      </div>
+    </header>
+    <main>
+      <section id="all-contacts">
+        <a href="#"><h2>All Contacts</h2></a>
+        <div id="container"></div>
+      </section>
+    </main>
+    <section id="create-contact">
+      <h3>Create New Contact</h3>
+      <form id="new" action="home.html">
+        <ul>
+          <li>
+            <label for="first-name">First Name: </label>
+            <input type="text" name="first-name" id="fname" />
+          </li>
+          <li>
+            <label for="last-name">Last Name: </label>
+            <input type="text" name="last-name" id="lname" />
+          </li>
+          <li>
+            <label for="phone">Phone: </label>
+            <input type="tel" name="phone" id="phone" />
+          </li>
+          <li>
+            <label for="address">Address: </label>
+            <input type="text" name="address" id="address" />
+          </li>
+        </ul>
+        <button id="create" form="new" type="submit">Save</button>
+        <button id="cancel" form="new" type="reset">Cancel</button>
+      </form>
+    </section>
+    <p id="info"></p>
   </body>
 </html>
