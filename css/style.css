@@ -27,7 +27,9 @@ input {
   color: red;
   margin: 10px;
 }
-
+.info {
+  padding: 10px;
+}
 p.editable {
   background-color: orange;
 }

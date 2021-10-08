@@ -9,38 +9,57 @@ $().ready(function () {
 
   class Contact {
     constructor(fname, lname, phone, address) {
-      this.fname = fname.toLowerCase();
-      this.lname = lname.toLowerCase();
-      this.phone = phone;
-      this.address = address.toLowerCase();
+      this._fname = fname;
+      this._lname = lname;
+      this._phone = phone;
+      this._address = address;
     }
 
-    get fullName() {
+    get firstName() {
       return (
-        this.fname.charAt(0).toUpperCase() +
-        this.fname.slice(1).toLowerCase() +
-        " " +
-        this.lname.charAt(0).toUpperCase() +
-        this.lname.slice(1).toLowerCase()
+        this._fname.charAt(0).toUpperCase() + this._fname.slice(1).toLowerCase()
       );
     }
+    get lastName() {
+      return (
+        this._lname.charAt(0).toUpperCase() + this._lname.slice(1).toLowerCase()
+      );
+    }
+    get fullName() {
+      return this.firstName + " " + this.lastName;
+    }
+    get phone() {
+      return this._phone;
+    }
+    get address() {
+      return this._address
+        .split(" ")
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join(" ");
+    }
     set updateFirstName(t) {
-      this.fname = t;
+      this._fname = t;
     }
     set updateLastName(t) {
-      this.lname = t;
+      this._lname = t;
     }
     set updatePhone(t) {
-      this.phone = t;
+      this._phone = t;
     }
     set updateAddress(t) {
-      this.address = t;
+      this._address = t;
     }
   }
 
   const createNewContact = (firstName, lastName, phone, address) => {
-    const contact = new Contact(firstName, lastName, phone, address);
-    return contact;
+    return new Contact(
+      firstName.toLowerCase(),
+      lastName.toLowerCase(),
+      phone,
+      address.toLowerCase()
+    );
   };
 
   $("h1").click(function () {
@@ -123,7 +142,7 @@ $().ready(function () {
     let $deleteBtn = $(this);
     let contact = $deleteBtn.parent().data("contact");
     if (contacts.indexOf(contact !== -1)) {
-      contacts = contacts.filter((item) => item.phone !== contact.phone);
+      contacts = contacts.filter((item) => item.phone !== contact._phone);
     }
     $deleteBtn.parent().remove();
     if (!contacts.length) {
@@ -141,10 +160,10 @@ $().ready(function () {
     let search = $("#search").val().toLowerCase();
     let found = contacts.find(
       (item) =>
-        item.fname.includes(search) ||
-        item.lname.includes(search) ||
-        item.phone == search ||
-        item.address.includes(search)
+        item._fname.includes(search) ||
+        item._lname.includes(search) ||
+        item._phone == search ||
+        item._address.includes(search)
     );
     if (!contacts.length) {
       $contactsContainer.prepend($info.show().text("No contacts found Z"));
@@ -182,8 +201,8 @@ $().ready(function () {
     let $editForm = $("form#edit");
     let contact = $(this).parent().data("contact");
     console.log($editForm);
-    $editForm.find("[name=first-name]").val(contact.fname);
-    $editForm.find("[name=last-name]").val(contact.lname);
+    $editForm.find("[name=first-name]").val(contact.firstName);
+    $editForm.find("[name=last-name]").val(contact.lastName);
     $editForm.find("[name=phone]").val(contact.phone);
     $editForm.find("[name=address]").val(contact.address);
     console.log(contacts);
@@ -224,5 +243,9 @@ $().ready(function () {
   contacts.push(c1);
   let c2 = createNewContact("helen", "talbot", "07700 000001", "reading");
   contacts.push(c2);
+  let c3 = createNewContact("jake", "gosling", "07700 000002", "sussex");
+  contacts.push(c3);
+  let c4 = createNewContact("robin", "hood", "07700 000003", "kent");
+  contacts.push(c4);
   displayContacts();
 });
