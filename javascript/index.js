@@ -74,8 +74,8 @@ $().ready(function () {
   };
 
   /////////////******** ADD NEW CONTACT *************////////
-
-  $("#new").on("submit", function (event) {
+  $(document).on("submit", "#new", function () {
+    // $("#new").on("submit", function (event) {
     event.preventDefault();
     let firstName = $(this).find("[name=first-name]").val().toLowerCase();
     let lastName = $(this).find("[name=last-name]").val().toLowerCase();
