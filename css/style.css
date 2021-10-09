@@ -27,9 +27,23 @@ input {
   color: red;
   margin: 10px;
 }
+
+textarea {
+  resize: vertical;
+}
 .info {
   padding: 10px;
 }
 p.editable {
   background-color: orange;
+}
+
+.contact-info a {
+  padding: 5px;
+}
+img {
+  width: 20px;
+}
+td {
+  padding: 15px;
 }

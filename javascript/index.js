@@ -1,12 +1,13 @@
 $().ready(function () {
   let contacts = [];
-  let $allContacts = $("contacts");
+  let $contacts = $("contacts");
   let $modifyContacts = $("#modify-contacts");
   let $info = $("#info");
   let $newContactBtn = $("#create-new");
   let $contactsContainer = $("#container");
   $modifyContacts.hide();
-
+  const phoneRgx = /^(?:(?:00)?44|0)7(?:[45789]\d{2}|624)\d{6}$/;
+  const $tbody = $("tbody");
   class Contact {
     constructor(fname, lname, phone, address) {
       this._fname = fname;
@@ -16,14 +17,20 @@ $().ready(function () {
     }
 
     get firstName() {
-      return (
-        this._fname.charAt(0).toUpperCase() + this._fname.slice(1).toLowerCase()
-      );
+      return this._fname
+        .split(" ")
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join(" ");
     }
     get lastName() {
-      return (
-        this._lname.charAt(0).toUpperCase() + this._lname.slice(1).toLowerCase()
-      );
+      return this._lname
+        .split(" ")
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join(" ");
     }
     get fullName() {
       return this.firstName + " " + this.lastName;
@@ -65,46 +72,67 @@ $().ready(function () {
   $("h1").click(function () {
     $("form").trigger("reset");
     $modifyContacts.hide();
-    $(".edit.editable").parent().removeClass("editable");
+    $(".edit.editable").removeClass("editable");
   });
   $("h2").click(function () {
     $("form").trigger("reset");
     $modifyContacts.hide();
-    $(".edit.editable").parent().removeClass("editable");
+    $(".edit.editable").removeClass("editable");
   });
   $newContactBtn.click(function () {
     $modifyContacts.find($("h3")).text("Create a Contact");
     $info.hide();
     $modifyContacts.show();
     $("form").prop("id", "new");
-    $(".edit.editable").parent().removeClass("editable");
+    $(".edit.editable").removeClass("editable");
     $("form").trigger("reset");
   });
 
   $("#cancel").click(function () {
     $("form").trigger("reset");
-    $(".edit.editable").parent().removeClass("editable");
+    $(".edit.editable").removeClass("editable");
     $modifyContacts.hide();
   });
-
-  const renderContact = (contact) => {
-    let paragraph = $("<p>")
-      .addClass("contact-info")
-      .data("contact", contact)
-      .text(contact.fullName + " " + contact.phone + " " + contact.address);
-
-    let delButton = $("<button>")
-      .text("delete")
-      .addClass("delete")
-      .prop("type", "button");
-
-    let editButton = $("<button>")
-      .text("edit")
-      .addClass("edit")
-      .prop("type", "button");
-    return paragraph.append(editButton).append(delButton);
+  const validateForm = (f, l, p, a) => {
+    if (phoneRgx.test(p)) {
+      return true;
+    } else {
+      console.log("Please enter phone in a valid format");
+      return false;
+    }
   };
 
+  const renderContact = (contact) => {
+    let row = $("<tr>");
+    let delButton = $("<a>")
+      .addClass("delete")
+      .append(
+        $("<img>").attr(
+          "src",
+          "https://img.icons8.com/material-rounded/24/000000/delete-trash.png"
+        )
+      );
+
+    let editButton = $("<a>")
+      .addClass("edit")
+      .append(
+        $("<img>").attr(
+          "src",
+          "https://img.icons8.com/ios-filled/50/000000/edit--v1.png"
+        )
+      );
+    row
+      .addClass("contact-info")
+      .append($("<td>").text(contact.firstName))
+      .append($("<td>").text(contact.lastName))
+      .append($("<td>").text(contact.phone))
+      .append($("<td>").text(contact.address))
+      .append($("<td>").append(editButton).append(delButton))
+      .data("contact", contact);
+
+    // row.append(editButton).append(delButton);
+    return row;
+  };
   /////////////******** ADD NEW CONTACT *************////////
   $(document).on("submit", "form#new", function (event) {
     event.preventDefault();
@@ -112,15 +140,18 @@ $().ready(function () {
     let firstName = $(this).find("[name=first-name]").val();
     let lastName = $(this).find("[name=last-name]").val();
     let phone = $(this).find("[name=phone]").val();
+    // console.log(typeof $("form").find("[name=phone]").val());
     let address = $(this).find("[name=address]").val();
-    const contact = createNewContact(firstName, lastName, phone, address);
-    contacts.push(contact);
-    //Add newly created contact to All Contacts Section
-    $contactsContainer.append(renderContact(contact));
-    //Empty form inputs
-    $(this).trigger("reset");
-    $modifyContacts.hide();
-    $info.hide();
+    if (validateForm(firstName, lastName, phone, address)) {
+      const contact = createNewContact(firstName, lastName, phone, address);
+      contacts.push(contact);
+      //Add newly created contact to Contacts table
+      $tbody.append(renderContact(contact));
+      //Empty form inputs
+      $(this).trigger("reset");
+      $modifyContacts.hide();
+      $info.hide();
+    }
   });
 
   ////////////********* DISPLAY ALL CONTACTS ********//////////
@@ -130,23 +161,23 @@ $().ready(function () {
       $contactsContainer.prepend($info.show().text("No contacts found X"));
     }
     for (let c of contacts) {
-      $contactsContainer.append(renderContact(c));
+      $tbody.append(renderContact(c));
     }
     $contactsContainer.show();
-    $allContacts.show();
+    $contacts.show();
   };
 
   /////////******** DELETE CONTACT *********///////////
 
   $(document).on("click", ".delete", function () {
     let $deleteBtn = $(this);
-    let contact = $deleteBtn.parent().data("contact");
+    let contact = $deleteBtn.parent().parent().data("contact");
     if (contacts.indexOf(contact !== -1)) {
       contacts = contacts.filter((item) => item.phone !== contact._phone);
     }
-    $deleteBtn.parent().remove();
+    $deleteBtn.parent().parent().remove();
     if (!contacts.length) {
-      $contactsContainer.prepend($info.show().text("No contacts found Y"));
+      $contactsContainer.append($info.show().text("No contacts found Y"));
     }
     $("form").trigger("reset");
     $modifyContacts.hide();
@@ -166,25 +197,23 @@ $().ready(function () {
         item._address.includes(search)
     );
     if (!contacts.length) {
-      $contactsContainer.prepend($info.show().text("No contacts found Z"));
+      $contactsContainer.append($info.show().text("No contacts found Z"));
     } else if (search == "") {
-      $contactsContainer.empty();
+      $tbody.empty();
       displayContacts();
     } else if (found && search !== "") {
       $info.hide();
-      $("#search-contacts").remove($("p"));
-      $contactsContainer.empty().append(renderContact(found));
+      $tbody.empty().append(renderContact(found));
     } else {
-      $contactsContainer
-        .empty()
-        .prepend($info.show().text(search + " not found"));
+      $tbody.empty();
+      $contactsContainer.append($info.show().text(search + " not found"));
     }
   });
 
   $("#search").on("focusout", function () {
     let search = $("#search");
     search.val("");
-    $contactsContainer.empty();
+    $tbody.empty();
     displayContacts();
   });
 
@@ -196,10 +225,10 @@ $().ready(function () {
     console.log($(this));
     $(this).addClass("editable");
     // $(this).parent().addClass("editable");
-    $(this).parent().data("contact");
+    $(this).parent().parent().data("contact");
     $("form").prop("id", "edit");
     let $editForm = $("form#edit");
-    let contact = $(this).parent().data("contact");
+    let contact = $(this).parent().parent().data("contact");
     console.log($editForm);
     $editForm.find("[name=first-name]").val(contact.firstName);
     $editForm.find("[name=last-name]").val(contact.lastName);
@@ -211,7 +240,7 @@ $().ready(function () {
 
   $(document).on("submit", "form#edit", function (event) {
     event.preventDefault();
-    let contact = $(".edit.editable").parent().data("contact");
+    let contact = $(".edit.editable").parent().parent().data("contact");
     let index = contacts.indexOf(contact);
     contacts[index].updateFirstName = $(this)
       .find("[name=first-name]")
@@ -233,7 +262,8 @@ $().ready(function () {
     //Empty form inputs
     $("form").trigger("reset");
     $modifyContacts.hide();
-    $contactsContainer.empty();
+    // $contactsContainer.empty();
+    $tbody.empty();
     displayContacts();
     $info.hide();
   });
