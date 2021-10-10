@@ -1,13 +1,15 @@
 $().ready(function () {
   let contacts = [];
-  let $contacts = $("contacts");
-  let $modifyContacts = $("#modify-contacts");
-  let $info = $("#info");
-  let $newContactBtn = $("#create-new");
-  let $contactsContainer = $("#container");
-  $modifyContacts.hide();
-  const phoneRgx = /^(?:(?:00)?44|0)7(?:[45789]\d{2}|624)\d{6}$/;
+  const $contacts = $("contacts");
+  const $modifyContacts = $("#modify-contacts");
+  const $info = $("#info");
+  const $newContactBtn = $("#create-new");
+  const $contactsContainer = $("#container");
   const $tbody = $("tbody");
+  const phoneRgx = /^(?:(?:00)?44|0)7(?:[45789]\d{2}|624)\d{6}$/;
+
+  $modifyContacts.hide();
+
   class Contact {
     constructor(fname, lname, phone, address) {
       this._fname = fname;
@@ -72,25 +74,26 @@ $().ready(function () {
   $("h1").click(function () {
     $("form").trigger("reset");
     $modifyContacts.hide();
-    $(".edit.editable").removeClass("editable");
+    $(".contact-info.editable").removeClass("editable");
   });
   $("h2").click(function () {
     $("form").trigger("reset");
     $modifyContacts.hide();
-    $(".edit.editable").removeClass("editable");
+    $(".contact-info.editable").removeClass("editable");
   });
   $newContactBtn.click(function () {
     $modifyContacts.find($("h3")).text("Create a Contact");
     $info.hide();
+    $contacts.hide();
     $modifyContacts.show();
     $("form").prop("id", "new");
-    $(".edit.editable").removeClass("editable");
+    $(".contact-info.editable").removeClass("editable");
     $("form").trigger("reset");
   });
 
   $("#cancel").click(function () {
     $("form").trigger("reset");
-    $(".edit.editable").removeClass("editable");
+    $(".contact-info.editable").removeClass("editable");
     $modifyContacts.hide();
   });
   const validateForm = (f, l, p, a) => {
@@ -109,7 +112,16 @@ $().ready(function () {
       .append(
         $("<img>").attr(
           "src",
-          "https://img.icons8.com/material-rounded/24/000000/delete-trash.png"
+          "https://img.icons8.com/ios-filled/50/000000/delete-forever.png"
+        )
+      );
+
+    let viewButton = $("<a>")
+      .addClass("view")
+      .append(
+        $("<img>").attr(
+          "src",
+          "https://img.icons8.com/ios-glyphs/30/000000/view-file.pnghttps://img.icons8.com/ios-glyphs/30/000000/view-file.png"
         )
       );
 
@@ -127,7 +139,7 @@ $().ready(function () {
       .append($("<td>").text(contact.lastName))
       .append($("<td>").text(contact.phone))
       .append($("<td>").text(contact.address))
-      .append($("<td>").append(editButton).append(delButton))
+      .append($("<td>").append(viewButton).append(editButton).append(delButton))
       .data("contact", contact);
 
     // row.append(editButton).append(delButton);
@@ -158,7 +170,7 @@ $().ready(function () {
 
   const displayContacts = () => {
     if (!contacts.length) {
-      $contactsContainer.prepend($info.show().text("No contacts found X"));
+      $info.show().text("No contacts found");
     }
     for (let c of contacts) {
       $tbody.append(renderContact(c));
@@ -177,7 +189,7 @@ $().ready(function () {
     }
     $deleteBtn.parent().parent().remove();
     if (!contacts.length) {
-      $contactsContainer.append($info.show().text("No contacts found Y"));
+      $info.show().text("No contacts found");
     }
     $("form").trigger("reset");
     $modifyContacts.hide();
@@ -197,7 +209,7 @@ $().ready(function () {
         item._address.includes(search)
     );
     if (!contacts.length) {
-      $contactsContainer.append($info.show().text("No contacts found Z"));
+      $info.show().text("No contacts found");
     } else if (search == "") {
       $tbody.empty();
       displayContacts();
@@ -206,7 +218,7 @@ $().ready(function () {
       $tbody.empty().append(renderContact(found));
     } else {
       $tbody.empty();
-      $contactsContainer.append($info.show().text(search + " not found"));
+      $info.show().text(search + " not found");
     }
   });
 
@@ -220,10 +232,10 @@ $().ready(function () {
   /////////******** EDIT CONTACT *********///////////
   $(document).on("click", ".edit", function () {
     $modifyContacts.find($("h3")).text("Edit Contact");
-    $(".edit.editable").removeClass("editable");
+    $(".contact-info.editable").removeClass("editable");
     // $(event.currentTarget).addClass("editable");
     console.log($(this));
-    $(this).addClass("editable");
+    $(this).parent().parent().addClass("editable");
     // $(this).parent().addClass("editable");
     $(this).parent().parent().data("contact");
     $("form").prop("id", "edit");
@@ -240,7 +252,7 @@ $().ready(function () {
 
   $(document).on("submit", "form#edit", function (event) {
     event.preventDefault();
-    let contact = $(".edit.editable").parent().parent().data("contact");
+    let contact = $(".contact-info.editable").data("contact");
     let index = contacts.indexOf(contact);
     contacts[index].updateFirstName = $(this)
       .find("[name=first-name]")
@@ -277,5 +289,13 @@ $().ready(function () {
   contacts.push(c3);
   let c4 = createNewContact("robin", "hood", "07700 000003", "kent");
   contacts.push(c4);
+  let c11 = createNewContact("seda", "demir", "07700 000000", "london");
+  contacts.push(c11);
+  let c22 = createNewContact("helen", "talbot", "07700 000001", "reading");
+  contacts.push(c22);
+  let c33 = createNewContact("jake", "gosling", "07700 000002", "sussex");
+  contacts.push(c33);
+  let c44 = createNewContact("robin", "hood", "07700 000003", "kent");
+  contacts.push(c44);
   displayContacts();
 });

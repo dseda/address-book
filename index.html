@@ -5,6 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Address Book</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oxygen&family=Ubuntu:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./css/style.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="./javascript/index.js"></script>
@@ -12,8 +18,9 @@
   <body>
     <header>
       <a href="#"><h1>My Contacts</h1></a>
-      <button id="create-new" type="button">Create New</button>
-      <div id="search-contacts">
+      <div class="nav">
+        <button id="create-new" type="button">Create New</button>
+
         <input
           type="search"
           id="search"
@@ -25,6 +32,7 @@
     <main>
       <section id="contacts">
         <a href="#"><h2>All Contacts</h2></a>
+
         <div id="container">
           <table id="all-contacts">
             <thead>
@@ -33,46 +41,46 @@
                 <th>Last Name</th>
                 <th>Phone</th>
                 <th>Address</th>
-                <th>Edit/delete</th>
+                <th></th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
+          <p id="info" class="info"></p>
         </div>
       </section>
+
+      <section id="modify-contacts">
+        <h3></h3>
+        <form action="">
+          <ul>
+            <li>
+              <label for="first-name">First Name: </label>
+              <input type="text" name="first-name" id="fname" required />
+            </li>
+            <li>
+              <label for="last-name">Last Name: </label>
+              <input type="text" name="last-name" id="lname" required />
+            </li>
+            <li>
+              <label for="phone">Phone: </label>
+              <input type="tel" " name="phone" id="phone" required />
+            </li>
+            <li>
+              <label for="address">Address: </label>
+              <textarea
+                rows="3"
+                name="address"
+                id="address"
+                required
+              ></textarea>
+            </li>
+          </ul>
+          <button id="create" type="submit">Save</button>
+          <button id="cancel" type="reset">Cancel</button>
+        </form>
+      </section>
     </main>
-    <section id="modify-contacts">
-      <h3></h3>
-      <form action="">
-        <ul>
-          <li>
-            <label for="first-name">First Name: </label>
-            <input type="text" name="first-name" id="fname" required />
-          </li>
-          <li>
-            <label for="last-name">Last Name: </label>
-            <input type="text" name="last-name" id="lname" required />
-          </li>
-          <li>
-            <label for="phone">Phone: </label>
-            <input type="tel" " name="phone" id="phone" required />
-          </li>
-          <li>
-            <label for="address">Address: </label>
-            <textarea
-              type="text"
-              rows="3"
-              name="address"
-              id="address"
-              required
-            ></textarea>
-          </li>
-        </ul>
-        <button id="create" type="submit">Save</button>
-        <button id="cancel" type="reset">Cancel</button>
-      </form>
-    </section>
-    <p id="info" class="info"></p>
     <footer>
       <a href="https://icons8.com/icon/cUD57nntjaHY/delete"
         >Delete icon by Icons8</a
