@@ -1,6 +1,6 @@
 $().ready(function () {
   let contacts = [];
-  const $contacts = $("contacts");
+  const $contacts = $("#contacts");
   const $modifyContacts = $("#modify-contacts");
   const $info = $("#info");
   const $newContactBtn = $("#create-new");
@@ -74,6 +74,7 @@ $().ready(function () {
   $("h1").click(function () {
     $("form").trigger("reset");
     $modifyContacts.hide();
+    $contacts.show();
     $(".contact-info.editable").removeClass("editable");
   });
   $("h2").click(function () {
@@ -82,7 +83,7 @@ $().ready(function () {
     $(".contact-info.editable").removeClass("editable");
   });
   $newContactBtn.click(function () {
-    $modifyContacts.find($("h3")).text("Create a Contact");
+    $modifyContacts.find($("h3")).text("Create Contact");
     $info.hide();
     $contacts.hide();
     $modifyContacts.show();
@@ -95,6 +96,7 @@ $().ready(function () {
     $("form").trigger("reset");
     $(".contact-info.editable").removeClass("editable");
     $modifyContacts.hide();
+    $contacts.show();
   });
   const validateForm = (f, l, p, a) => {
     if (phoneRgx.test(p)) {
@@ -154,16 +156,17 @@ $().ready(function () {
     let phone = $(this).find("[name=phone]").val();
     // console.log(typeof $("form").find("[name=phone]").val());
     let address = $(this).find("[name=address]").val();
-    if (validateForm(firstName, lastName, phone, address)) {
-      const contact = createNewContact(firstName, lastName, phone, address);
-      contacts.push(contact);
-      //Add newly created contact to Contacts table
-      $tbody.append(renderContact(contact));
-      //Empty form inputs
-      $(this).trigger("reset");
-      $modifyContacts.hide();
-      $info.hide();
-    }
+    // if (validateForm(firstName, lastName, phone, address)) {
+    const contact = createNewContact(firstName, lastName, phone, address);
+    contacts.push(contact);
+    //Add newly created contact to Contacts table
+    $tbody.append(renderContact(contact));
+    //Empty form inputs
+    $(this).trigger("reset");
+    $modifyContacts.hide();
+    $contacts.show();
+    $info.hide();
+    // }
   });
 
   ////////////********* DISPLAY ALL CONTACTS ********//////////
@@ -200,25 +203,28 @@ $().ready(function () {
   $("#search").on("focusin change input click", function () {
     $modifyContacts.hide();
     $info.hide();
-    let search = $("#search").val().toLowerCase();
-    let found = contacts.find(
-      (item) =>
-        item._fname.includes(search) ||
-        item._lname.includes(search) ||
-        item._phone == search ||
-        item._address.includes(search)
+    let search = $("#search").val().toLowerCase().split(" "); // get input as array
+    let foundContacts = contacts.filter(
+      (contact) =>
+        search.includes(contact._fname) ||
+        search.includes(contact._lname) ||
+        search.includes(contact._phone) ||
+        search.includes(contact._address)
     );
     if (!contacts.length) {
       $info.show().text("No contacts found");
     } else if (search == "") {
       $tbody.empty();
       displayContacts();
-    } else if (found && search !== "") {
+    } else if (foundContacts.length !== 0 && search !== "") {
       $info.hide();
-      $tbody.empty().append(renderContact(found));
+      $tbody.empty();
+      for (let i of foundContacts) {
+        $tbody.append(renderContact(i));
+      }
     } else {
       $tbody.empty();
-      $info.show().text(search + " not found");
+      $info.show().text(search.join(" ") + " not found");
     }
   });
 
@@ -231,6 +237,7 @@ $().ready(function () {
 
   /////////******** EDIT CONTACT *********///////////
   $(document).on("click", ".edit", function () {
+    $contacts.hide();
     $modifyContacts.find($("h3")).text("Edit Contact");
     $(".contact-info.editable").removeClass("editable");
     // $(event.currentTarget).addClass("editable");
@@ -248,6 +255,7 @@ $().ready(function () {
     $editForm.find("[name=address]").val(contact.address);
     console.log(contacts);
     $modifyContacts.show();
+    // $contacts.hide();
   });
 
   $(document).on("submit", "form#edit", function (event) {
@@ -274,7 +282,6 @@ $().ready(function () {
     //Empty form inputs
     $("form").trigger("reset");
     $modifyContacts.hide();
-    // $contactsContainer.empty();
     $tbody.empty();
     displayContacts();
     $info.hide();
