@@ -2,11 +2,14 @@
 
 Simple Address Book app with JS and JQuery.
 
-##### What it does ?
+#### What it does ?
 
-Create, Edit, Search, Sort contacts.
+- Create
+- Edit
+- Search
+- Sort contacts.
 
-[The App] (dseda.github.io/address-book/)
+[The App](dseda.github.io/address-book/)
 
 ## Design
 
