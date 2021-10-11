@@ -6,7 +6,7 @@ $().ready(function () {
   const $newContactBtn = $("#create-new");
   const $contactsContainer = $("#container");
   const $tbody = $("tbody");
-  const phoneRgx = /^(?:(?:00)?44|0)7(?:[45789]\d{2}|624)\d{6}$/;
+  const phoneRgx = /(((\+44)? ?(\(0\))? ?)|(0))( ?[0-9]{3,4}){3}/; //Reference https://regexlib.com/Search.aspx?k=uk%20telephone
 
   $modifyContacts.hide();
 
@@ -17,7 +17,6 @@ $().ready(function () {
       this._phone = phone;
       this._address = address;
     }
-
     get firstName() {
       return this._fname
         .split(" ")
@@ -76,11 +75,15 @@ $().ready(function () {
     $modifyContacts.hide();
     $contacts.show();
     $(".contact-info.editable").removeClass("editable");
+    $("p.tel").remove();
+    $("input[type='tel']").removeClass("invalid");
   });
   $("h2").click(function () {
     $("form").trigger("reset");
     $modifyContacts.hide();
     $(".contact-info.editable").removeClass("editable");
+    $("p.tel").remove();
+    $("input[type='tel']").removeClass("invalid");
   });
   $newContactBtn.click(function () {
     $modifyContacts.find($("h3")).text("Create Contact");
@@ -90,6 +93,8 @@ $().ready(function () {
     $("form").prop("id", "new");
     $(".contact-info.editable").removeClass("editable");
     $("form").trigger("reset");
+    $("p.tel").remove();
+    $("input[type='tel']").removeClass("invalid");
   });
 
   $("#cancel").click(function () {
@@ -97,13 +102,22 @@ $().ready(function () {
     $(".contact-info.editable").removeClass("editable");
     $modifyContacts.hide();
     $contacts.show();
+    $("p.tel").remove();
+    $("input[type='tel']").removeClass("invalid");
   });
-  const validateForm = (f, l, p, a) => {
-    if (phoneRgx.test(p)) {
+
+  const phoneFormatMsg = $("<p>")
+    .addClass("tel")
+    .text("Please enter a valid UK phone number");
+
+  const validateForm = (f, l, phone, a) => {
+    if (phoneRgx.test(phone)) {
       return true;
     } else {
-      console.log("Please enter phone in a valid format");
+      $("input[type='tel']").addClass("invalid");
+      $("#tel").append(phoneFormatMsg);
       return false;
+      //TODO: validate other user inputs
     }
   };
 
@@ -150,23 +164,26 @@ $().ready(function () {
   /////////////******** ADD NEW CONTACT *************////////
   $(document).on("submit", "form#new", function (event) {
     event.preventDefault();
-
-    let firstName = $(this).find("[name=first-name]").val();
-    let lastName = $(this).find("[name=last-name]").val();
-    let phone = $(this).find("[name=phone]").val();
-    // console.log(typeof $("form").find("[name=phone]").val());
-    let address = $(this).find("[name=address]").val();
-    // if (validateForm(firstName, lastName, phone, address)) {
-    const contact = createNewContact(firstName, lastName, phone, address);
-    contacts.push(contact);
-    //Add newly created contact to Contacts table
-    $tbody.append(renderContact(contact));
-    //Empty form inputs
-    $(this).trigger("reset");
-    $modifyContacts.hide();
-    $contacts.show();
-    $info.hide();
-    // }
+    // Get user inputs
+    let firstName = $(this).find("[name=first-name]").val().trim();
+    let lastName = $(this).find("[name=last-name]").val().trim();
+    let phone = $(this).find("[name=phone]").val().trim();
+    let address = $(this).find("[name=address]").val().trim();
+    // Validate form
+    if (validateForm(firstName, lastName, phone, address)) {
+      const contact = createNewContact(firstName, lastName, phone, address);
+      contacts.push(contact);
+      //Empty form inputs
+      $(this).trigger("reset");
+      // Hide sections, etc.
+      $modifyContacts.hide();
+      $contacts.show();
+      $info.hide();
+      $("p.tel").remove();
+      $("input[type='tel']").removeClass("invalid");
+      $tbody.empty();
+      displayContacts();
+    }
   });
 
   ////////////********* DISPLAY ALL CONTACTS ********//////////
@@ -175,9 +192,22 @@ $().ready(function () {
     if (!contacts.length) {
       $info.show().text("No contacts found");
     }
+    contacts.sort(function (a, b) {
+      var nameA = a._fname;
+      var nameB = b._fname;
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      // names must be equal
+      return 0;
+    });
     for (let c of contacts) {
       $tbody.append(renderContact(c));
     }
+
     $contactsContainer.show();
     $contacts.show();
   };
@@ -187,10 +217,14 @@ $().ready(function () {
   $(document).on("click", ".delete", function () {
     let $deleteBtn = $(this);
     let contact = $deleteBtn.parent().parent().data("contact");
+    let userAnswer = window.confirm("Delete " + contact.fullName + " ?");
+
     if (contacts.indexOf(contact !== -1)) {
       contacts = contacts.filter((item) => item.phone !== contact._phone);
     }
-    $deleteBtn.parent().parent().remove();
+    if (userAnswer) {
+      $deleteBtn.parent().parent().remove();
+    }
     if (!contacts.length) {
       $info.show().text("No contacts found");
     }
@@ -204,13 +238,12 @@ $().ready(function () {
     $modifyContacts.hide();
     $info.hide();
     let search = $("#search").val().toLowerCase().split(" "); // get input as array
-    let foundContacts = contacts.filter(
-      (contact) =>
-        search.includes(contact._fname) ||
-        search.includes(contact._lname) ||
-        search.includes(contact._phone) ||
-        search.includes(contact._address)
-    );
+    let foundContacts = contacts.filter((contact) => {
+      return Object.values(contact).some((item) => {
+        return search.includes(item);
+      });
+    });
+
     if (!contacts.length) {
       $info.show().text("No contacts found");
     } else if (search == "") {
@@ -240,51 +273,60 @@ $().ready(function () {
     $contacts.hide();
     $modifyContacts.find($("h3")).text("Edit Contact");
     $(".contact-info.editable").removeClass("editable");
-    // $(event.currentTarget).addClass("editable");
-    console.log($(this));
     $(this).parent().parent().addClass("editable");
-    // $(this).parent().addClass("editable");
     $(this).parent().parent().data("contact");
     $("form").prop("id", "edit");
     let $editForm = $("form#edit");
     let contact = $(this).parent().parent().data("contact");
     console.log($editForm);
+    //Populate contact info
     $editForm.find("[name=first-name]").val(contact.firstName);
     $editForm.find("[name=last-name]").val(contact.lastName);
     $editForm.find("[name=phone]").val(contact.phone);
     $editForm.find("[name=address]").val(contact.address);
-    console.log(contacts);
     $modifyContacts.show();
-    // $contacts.hide();
   });
 
   $(document).on("submit", "form#edit", function (event) {
     event.preventDefault();
     let contact = $(".contact-info.editable").data("contact");
     let index = contacts.indexOf(contact);
-    contacts[index].updateFirstName = $(this)
-      .find("[name=first-name]")
-      .val()
-      .toLowerCase();
-    contacts[index].updateLastName = $(this)
-      .find("[name=last-name]")
-      .val()
-      .toLowerCase();
-    contacts[index].updatePhone = $(this)
-      .find("[name=phone]")
-      .val()
-      .toLowerCase();
-    contacts[index].updateAddress = $(this)
-      .find("[name=address]")
-      .val()
-      .toLowerCase();
+    //Validate form and update contact info
+    if (
+      validateForm(
+        contact._fname,
+        contact._lname,
+        contact._phone,
+        contact._address
+      )
+    ) {
+      contacts[index].updateFirstName = $(this)
+        .find("[name=first-name]")
+        .val()
+        .toLowerCase();
+      contacts[index].updateLastName = $(this)
+        .find("[name=last-name]")
+        .val()
+        .toLowerCase();
+      contacts[index].updatePhone = $(this)
+        .find("[name=phone]")
+        .val()
+        .toLowerCase();
+      contacts[index].updateAddress = $(this)
+        .find("[name=address]")
+        .val()
+        .toLowerCase();
 
-    //Empty form inputs
-    $("form").trigger("reset");
-    $modifyContacts.hide();
-    $tbody.empty();
-    displayContacts();
-    $info.hide();
+      //Empty form inputs
+      $("form").trigger("reset");
+      // Hide sections, etc.
+      $modifyContacts.hide();
+      $tbody.empty();
+      $info.hide();
+      $("p.tel").remove();
+      $("input[type='tel']").removeClass("invalid");
+      displayContacts();
+    }
   });
 
   //Add dummy data

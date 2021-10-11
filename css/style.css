@@ -164,6 +164,12 @@ label {
   margin: 10px auto;
   width: 80%;
 }
+input[type="tel"].invalid {
+  border: 1px solid red;
+}
+#tel p {
+  color: red;
+}
 
 textarea {
   resize: vertical;
