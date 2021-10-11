@@ -1,5 +1,5 @@
 $().ready(function () {
-  let contacts = [];
+  const contacts = [];
   const $contacts = $("#contacts");
   const $modifyContacts = $("#modify-contacts");
   const $info = $("#info");
@@ -290,6 +290,10 @@ $().ready(function () {
   let c3 = createNewContact("jake", "gosling", "07703000002", "sussex");
   let c4 = createNewContact("Dua", "Lipa", "07704000003", "London");
   let c5 = createNewContact("John", "Resig", "07704000004", "New York");
-  contacts.push(c1).push(c2).push(c3).push(c4).push(c5);
+  contacts.push(c1);
+  contacts.push(c2);
+  contacts.push(c3);
+  contacts.push(c4);
+  contacts.push(c5);
   displayContacts();
 });
