@@ -9,7 +9,7 @@ Simple Address Book app with JS and JQuery.
 - Search
 - Sort contacts.
 
-[The App](dseda.github.io/address-book/)
+[Try Address Book App](https://dseda.github.io/address-book/)
 
 ## Design
 
