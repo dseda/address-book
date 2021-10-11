@@ -75,11 +75,7 @@ table {
   min-width: 80%;
   margin: auto;
   table-layout: fixed;
-}
-
-tr.contact-info {
-  width: 100%;
-  padding: 2px 5px;
+  text-overflow: ellipsis;
 }
 
 tr td:last-child a {
@@ -92,18 +88,19 @@ thead tr th {
   color: #0b708c;
   font-weight: 700;
 }
-
+tbody tr {
+  background-color: rgb(223, 223, 223);
+  border-radius: 10px;
+  width: 100%;
+  padding: 2px 5px;
+}
 tbody td {
   font-weight: 500;
   padding: 13px;
   text-align: center;
   font-weight: 500;
   max-width: 60px;
-}
-tbody tr {
-  background-color: rgb(223, 223, 223);
-  border-radius: 10px;
-  padding-top: 20px;
+  overflow: hidden;
 }
 
 .contact-info a {

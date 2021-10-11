@@ -132,15 +132,6 @@ $().ready(function () {
         )
       );
 
-    let viewButton = $("<a>")
-      .addClass("view")
-      .append(
-        $("<img>").attr(
-          "src",
-          "https://img.icons8.com/ios-glyphs/30/000000/view-file.pnghttps://img.icons8.com/ios-glyphs/30/000000/view-file.png"
-        )
-      );
-
     let editButton = $("<a>")
       .addClass("edit")
       .append(
@@ -155,7 +146,7 @@ $().ready(function () {
       .append($("<td>").text(contact.lastName))
       .append($("<td>").text(contact.phone))
       .append($("<td>").text(contact.address))
-      .append($("<td>").append(viewButton).append(editButton).append(delButton))
+      .append($("<td>").append(editButton).append(delButton))
       .data("contact", contact);
 
     // row.append(editButton).append(delButton);
@@ -245,6 +236,8 @@ $().ready(function () {
       $tbody.empty();
       displayContacts();
     } else if ($tbody.children()) {
+      /* Reference: www.w3schools.com/jquery/jquery_filters.asp 
+      The enhanced version below; multiple words in a search field can be searched */
       $("tbody tr").filter(function () {
         for (let i of search) {
           $(this).toggle($(this).text().toLowerCase().indexOf(i) > -1);
@@ -325,22 +318,20 @@ $().ready(function () {
     }
   });
 
+  //   });
+  //   console.log(contact);
+  // });
+
   //Add dummy data
-  let c1 = createNewContact("seda", "demir", "07700 000000", "london");
+  let c1 = createNewContact("seda", "demir", "07701000000", "london");
   contacts.push(c1);
-  let c2 = createNewContact("helen", "talbot", "07700 000001", "reading");
+  let c2 = createNewContact("helen", "talbot", "07702000001", "reading");
   contacts.push(c2);
-  let c3 = createNewContact("jake", "gosling", "07700 000002", "sussex");
+  let c3 = createNewContact("jake", "gosling", "07703000002", "sussex");
   contacts.push(c3);
-  let c4 = createNewContact("robin", "hood", "07700 000003", "kent");
+  let c4 = createNewContact("Dua", "Lipa", "07704000003", "London");
   contacts.push(c4);
-  let c11 = createNewContact("seda", "demir", "07700 000000", "london");
-  contacts.push(c11);
-  let c22 = createNewContact("helen", "talbot", "07700 000001", "reading");
-  contacts.push(c22);
-  let c33 = createNewContact("jake", "gosling", "07700 000002", "sussex");
-  contacts.push(c33);
-  let c44 = createNewContact("robin", "hood", "07700 000003", "kent");
-  contacts.push(c44);
+  let c5 = createNewContact("John", "Resig", "07704000004", "New York");
+  contacts.push(c5);
   displayContacts();
 });
