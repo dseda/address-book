@@ -237,24 +237,20 @@ $().ready(function () {
   $("#search").on("focusin change input click", function () {
     $modifyContacts.hide();
     $info.hide();
-    let search = $("#search").val().toLowerCase().split(" "); // get input as array
-    let foundContacts = contacts.filter((contact) => {
-      return Object.values(contact).some((item) => {
-        return search.includes(item);
-      });
-    });
+    let search = $("#search").val().trim().toLowerCase().split(" "); // get input as array
 
     if (!contacts.length) {
       $info.show().text("No contacts found");
     } else if (search == "") {
       $tbody.empty();
       displayContacts();
-    } else if (foundContacts.length !== 0 && search !== "") {
-      $info.hide();
-      $tbody.empty();
-      for (let i of foundContacts) {
-        $tbody.append(renderContact(i));
-      }
+    } else if ($tbody.children()) {
+      $("tbody tr").filter(function () {
+        for (let i of search) {
+          $(this).toggle($(this).text().toLowerCase().indexOf(i) > -1);
+          console.log(search);
+        }
+      });
     } else {
       $tbody.empty();
       $info.show().text(search.join(" ") + " not found");
