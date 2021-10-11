@@ -28,10 +28,10 @@ button {
   font-size: 1rem;
   background-color: #0b708c;
   color: whitesmoke;
-  cursor: grab;
   border: none;
   border-radius: 5px;
 }
+
 button:active {
   box-shadow: 4px 4px 6px rgb(6, 60, 75, 0.5);
 }
@@ -59,6 +59,14 @@ h3 {
   font-size: 1.7rem;
   font-weight: 600;
 }
+
+a {
+  text-decoration: none;
+  cursor: grab;
+}
+a:visited {
+  color: rgb(45, 45, 45);
+}
 main {
   margin: auto;
   width: 90%;
@@ -75,14 +83,9 @@ table {
   min-width: 80%;
   margin: auto;
   table-layout: fixed;
-  text-overflow: ellipsis;
 }
 
-tr td:last-child a {
-  padding: auto 10px;
-}
-
-thead tr th {
+th {
   padding: 10px;
   align-items: center;
   color: #0b708c;
@@ -94,18 +97,20 @@ tbody tr {
   width: 100%;
   padding: 2px 5px;
 }
+
+td:last-child a {
+  padding: 10px;
+  border-radius: 30%;
+}
+td:last-child a:active {
+  background-color: rgb(73, 75, 75);
+}
 tbody td {
   font-weight: 500;
   padding: 13px;
   text-align: center;
   font-weight: 500;
-  max-width: 60px;
   overflow: hidden;
-}
-
-.contact-info a {
-  padding: 10px;
-  border-radius: 30%;
 }
 .editable {
   background-color: rgb(84, 85, 86);
@@ -113,26 +118,10 @@ tbody td {
   color: whitesmoke;
 }
 
-.contact-info a:active {
-  background-color: rgb(73, 75, 75);
-}
-.contact-info a.selected {
-  background-color: rgb(73, 75, 75);
-  border: solid white 0.5px;
-}
 img {
   width: 24px;
 }
-a {
-  text-decoration: none;
-  cursor: grab;
-}
-a:visited {
-  color: rgb(45, 45, 45);
-}
-.contact-selected {
-  background-color: rgb(26, 26, 25);
-}
+
 form {
   width: 60%;
   margin: auto;
@@ -144,20 +133,19 @@ textarea {
   display: block;
   padding: 12px 20px;
   margin: 10px auto 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
   font-size: 1rem;
   font-weight: 500;
   font-family: "Ubuntu", sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 label,
 button.save,
 button.cancel {
   display: block;
-  text-align: left;
 }
 label {
+  text-align: left;
   margin: 10px auto;
   width: 80%;
 }
@@ -167,7 +155,6 @@ input[type="tel"].invalid {
 #tel p {
   color: red;
 }
-
 textarea {
   resize: vertical;
   max-height: 10rem;
