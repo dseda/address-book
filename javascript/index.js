@@ -71,39 +71,19 @@ $().ready(function () {
   };
 
   $("h1").click(function () {
-    $("form").trigger("reset");
-    $modifyContacts.hide();
-    $contacts.show();
-    $(".contact-info.editable").removeClass("editable");
-    $("p.tel").remove();
-    $("input[type='tel']").removeClass("invalid");
+    reset($contacts);
   });
   $("h2").click(function () {
-    $("form").trigger("reset");
-    $modifyContacts.hide();
-    $(".contact-info.editable").removeClass("editable");
-    $("p.tel").remove();
-    $("input[type='tel']").removeClass("invalid");
+    reset($contacts);
   });
   $newContactBtn.click(function () {
     $modifyContacts.find($("h3")).text("Create Contact");
-    $info.hide();
-    $contacts.hide();
-    $modifyContacts.show();
+    reset($modifyContacts);
     $("form").prop("id", "new");
-    $(".contact-info.editable").removeClass("editable");
-    $("form").trigger("reset");
-    $("p.tel").remove();
-    $("input[type='tel']").removeClass("invalid");
   });
 
   $("#cancel").click(function () {
-    $("form").trigger("reset");
-    $(".contact-info.editable").removeClass("editable");
-    $modifyContacts.hide();
-    $contacts.show();
-    $("p.tel").remove();
-    $("input[type='tel']").removeClass("invalid");
+    reset($contacts);
   });
 
   const phoneFormatMsg = $("<p>")
@@ -121,6 +101,16 @@ $().ready(function () {
     }
   };
 
+  const reset = (element) => {
+    $("form").trigger("reset");
+    $(".contact-info.editable").removeClass("editable");
+    $("p.tel").remove();
+    $("input[type='tel']").removeClass("invalid");
+    $modifyContacts.hide();
+    $contacts.hide();
+    $info.hide();
+    element.show();
+  };
   const renderContact = (contact) => {
     let row = $("<tr>");
     let delButton = $("<a>")
@@ -148,8 +138,6 @@ $().ready(function () {
       .append($("<td>").text(contact.address))
       .append($("<td>").append(editButton).append(delButton))
       .data("contact", contact);
-
-    // row.append(editButton).append(delButton);
     return row;
   };
   /////////////******** ADD NEW CONTACT *************////////
@@ -164,14 +152,7 @@ $().ready(function () {
     if (validateForm(firstName, lastName, phone, address)) {
       const contact = createNewContact(firstName, lastName, phone, address);
       contacts.push(contact);
-      //Empty form inputs
-      $(this).trigger("reset");
-      // Hide sections, etc.
-      $modifyContacts.hide();
-      $contacts.show();
-      $info.hide();
-      $("p.tel").remove();
-      $("input[type='tel']").removeClass("invalid");
+      reset($contacts);
       $tbody.empty();
       displayContacts();
     }
@@ -184,22 +165,19 @@ $().ready(function () {
       $info.show().text("No contacts found");
     }
     contacts.sort(function (a, b) {
-      var nameA = a._fname;
-      var nameB = b._fname;
-      if (nameA < nameB) {
+      var fNameA = a._fname;
+      var fNameB = b._fname;
+      if (fNameA < fNameB) {
         return -1;
       }
-      if (nameA > nameB) {
+      if (fNameA > fNameB) {
         return 1;
       }
-      // names must be equal
       return 0;
     });
     for (let c of contacts) {
       $tbody.append(renderContact(c));
     }
-
-    $contactsContainer.show();
     $contacts.show();
   };
 
@@ -220,16 +198,12 @@ $().ready(function () {
       $info.show().text("No contacts found");
     }
     $("form").trigger("reset");
-    $modifyContacts.hide();
   });
-
   /////////******** SEARCH CONTACTS *********///////////
 
   $("#search").on("focusin change input click", function () {
-    $modifyContacts.hide();
-    $info.hide();
+    reset($contacts);
     let search = $("#search").val().trim().toLowerCase().split(" "); // get input as array
-
     if (!contacts.length) {
       $info.show().text("No contacts found");
     } else if (search == "") {
@@ -249,7 +223,6 @@ $().ready(function () {
       $info.show().text(search.join(" ") + " not found");
     }
   });
-
   $("#search").on("focusout", function () {
     let search = $("#search");
     search.val("");
@@ -262,11 +235,12 @@ $().ready(function () {
     $contacts.hide();
     $modifyContacts.find($("h3")).text("Edit Contact");
     $(".contact-info.editable").removeClass("editable");
-    $(this).parent().parent().addClass("editable");
-    $(this).parent().parent().data("contact");
+    let row = $(this).parent().parent();
+    row.addClass("editable");
+    row.data("contact");
     $("form").prop("id", "edit");
     let $editForm = $("form#edit");
-    let contact = $(this).parent().parent().data("contact");
+    let contact = row.data("contact");
     console.log($editForm);
     //Populate contact info
     $editForm.find("[name=first-name]").val(contact.firstName);
@@ -275,7 +249,6 @@ $().ready(function () {
     $editForm.find("[name=address]").val(contact.address);
     $modifyContacts.show();
   });
-
   $(document).on("submit", "form#edit", function (event) {
     event.preventDefault();
     let contact = $(".contact-info.editable").data("contact");
@@ -305,33 +278,18 @@ $().ready(function () {
         .find("[name=address]")
         .val()
         .toLowerCase();
-
-      //Empty form inputs
-      $("form").trigger("reset");
-      // Hide sections, etc.
-      $modifyContacts.hide();
       $tbody.empty();
-      $info.hide();
-      $("p.tel").remove();
-      $("input[type='tel']").removeClass("invalid");
+      reset($contacts);
       displayContacts();
     }
   });
 
-  //   });
-  //   console.log(contact);
-  // });
-
   //Add dummy data
   let c1 = createNewContact("seda", "demir", "07701000000", "london");
-  contacts.push(c1);
   let c2 = createNewContact("helen", "talbot", "07702000001", "reading");
-  contacts.push(c2);
   let c3 = createNewContact("jake", "gosling", "07703000002", "sussex");
-  contacts.push(c3);
   let c4 = createNewContact("Dua", "Lipa", "07704000003", "London");
-  contacts.push(c4);
   let c5 = createNewContact("John", "Resig", "07704000004", "New York");
-  contacts.push(c5);
+  contacts.push(c1).push(c2).push(c3).push(c4).push(c5);
   displayContacts();
 });
