@@ -1,5 +1,5 @@
 $().ready(function () {
-  const contacts = [];
+  let contacts = [];
   const $contacts = $("#contacts");
   const $modifyContacts = $("#modify-contacts");
   const $info = $("#info");
@@ -187,7 +187,7 @@ $().ready(function () {
     let $deleteBtn = $(this);
     let contact = $deleteBtn.parent().parent().data("contact");
     let userAnswer = window.confirm("Delete " + contact.fullName + " ?");
-
+    console.log($deleteBtn.parent().parent());
     if (contacts.indexOf(contact !== -1)) {
       contacts = contacts.filter((item) => item.phone !== contact._phone);
     }
