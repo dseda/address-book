@@ -214,7 +214,10 @@ $().ready(function () {
       for (let contact of contacts) {
         if (
           search.every((element) => {
-            return Object.values(contact).includes(element);
+            // return Object.values(contact).includes(element);
+
+            let values = Object.values(contact);
+            return values.some((item) => item.includes(element));
           })
         ) {
           $tbody.append(renderContact(contact));
