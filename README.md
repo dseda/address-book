@@ -13,4 +13,4 @@ Simple Address Book app with JS and JQuery.
 
 ## Design
 
-![Figma Prototype v2](/planning-and-design/desktop-v2.png)
+![Figma Prototype v2](/design/desktop-v2.png)
