@@ -202,29 +202,30 @@ $().ready(function () {
   /////////******** SEARCH CONTACTS *********///////////
 
   $("#search").on("focusin change input click", function () {
+    $tbody.empty();
     reset($contacts);
     let search = $("#search").val().trim().toLowerCase().split(" "); // get input as array
+    let founds = [];
     if (!contacts.length) {
       $info.show().text("No contacts found");
-    } else if (search == "") {
-      $tbody.empty();
-      displayContacts();
-    } else if ($tbody.children()) {
-      $tbody.empty();
-      for (let contact of contacts) {
-        if (
-          search.every((element) => {
-            // return Object.values(contact).includes(element);
-
-            let values = Object.values(contact);
-            return values.some((item) => item.includes(element));
-          })
-        ) {
-          $tbody.append(renderContact(contact));
-        }
+    }
+    for (let contact of contacts) {
+      if (
+        search.every((element) => {
+          // return Object.values(contact).includes(element);
+          return Object.values(contact).some((item) => item.includes(element));
+        })
+      ) {
+        founds.push(contact);
       }
-    } else {
-      $tbody.empty();
+    }
+    if (search == "") {
+      displayContacts();
+    } else if (founds.length > 0) {
+      for (let found of founds) {
+        $tbody.append(renderContact(found));
+      }
+    } else if (founds.length === 0) {
       $info.show().text(search.join(" ") + " not found");
     }
   });
