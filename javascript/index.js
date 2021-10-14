@@ -187,7 +187,7 @@ $().ready(function () {
     let $deleteBtn = $(this);
     let contact = $deleteBtn.parent().parent().data("contact");
     let userAnswer = window.confirm("Delete " + contact.fullName + " ?");
-    console.log($deleteBtn.parent().parent());
+
     if (contacts.indexOf(contact !== -1)) {
       contacts = contacts.filter((item) => item.phone !== contact._phone);
     }
@@ -210,14 +210,16 @@ $().ready(function () {
       $tbody.empty();
       displayContacts();
     } else if ($tbody.children()) {
-      /* Reference: www.w3schools.com/jquery/jquery_filters.asp 
-      The enhanced version below; multiple words in a search field can be searched */
-      $("tbody tr").filter(function () {
-        for (let i of search) {
-          $(this).toggle($(this).text().toLowerCase().indexOf(i) > -1);
-          console.log(search);
+      $tbody.empty();
+      for (let contact of contacts) {
+        if (
+          search.every((element) => {
+            return Object.values(contact).includes(element);
+          })
+        ) {
+          $tbody.append(renderContact(contact));
         }
-      });
+      }
     } else {
       $tbody.empty();
       $info.show().text(search.join(" ") + " not found");
@@ -285,10 +287,10 @@ $().ready(function () {
   });
 
   //Add dummy data
-  let c1 = createNewContact("seda", "demir", "07701000000", "london");
+  let c1 = createNewContact("s", "demir", "07701000000", "london");
   let c2 = createNewContact("helen", "talbot", "07702000001", "reading");
-  let c3 = createNewContact("jake", "gosling", "07703000002", "sussex");
-  let c4 = createNewContact("Dua", "Lipa", "07704000003", "London");
+  let c3 = createNewContact("jake", "talbot", "07703000002", "sussex");
+  let c4 = createNewContact("helen", "Lipa", "07704000003", "London");
   let c5 = createNewContact("John", "Resig", "07704000004", "New York");
   contacts.push(c1);
   contacts.push(c2);
