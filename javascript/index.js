@@ -221,11 +221,11 @@ $().ready(function () {
     }
     if (search == "") {
       displayContacts();
-    } else if (founds.length > 0) {
+    } else if (founds.length) {
       for (let found of founds) {
         $tbody.append(renderContact(found));
       }
-    } else if (founds.length === 0) {
+    } else if (!founds.length) {
       $info.show().text(search.join(" ") + " not found");
     }
   });
@@ -290,7 +290,7 @@ $().ready(function () {
     }
   });
 
-  //Add dummy data
+  //Add sample data
   let c1 = createNewContact("s", "demir", "07701000000", "london");
   let c2 = createNewContact("helen", "talbot", "07702000001", "reading");
   let c3 = createNewContact("jake", "talbot", "07703000002", "sussex");
